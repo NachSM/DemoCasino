@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { BasePage } from "./basePage.po";
+import { BasePage } from "../basePage.po";
 
 export class RegistrationPage extends BasePage {
 
@@ -19,6 +19,7 @@ export class RegistrationPage extends BasePage {
     readonly _middleName: Locator;
     readonly _bonusListElement: Locator;
     readonly _secretQuestion: Locator;
+    readonly _secretAnswer: Locator;
     readonly _secretQuestionList: Locator;
     readonly _birthday: Locator;
     readonly _address: Locator;
@@ -26,6 +27,7 @@ export class RegistrationPage extends BasePage {
     readonly _city: Locator;
     readonly _postalCode: Locator;
     readonly _countryList: Locator;
+    readonly _submitButton: Locator;
     readonly _calendar: {
         prev: Locator,
         next: Locator,
@@ -34,6 +36,11 @@ export class RegistrationPage extends BasePage {
         months: Locator,
         days: Locator,
     };
+    readonly _successIcon: Locator;
+    readonly _successMessage: Locator;
+    readonly _viewProfileButton: Locator;
+    readonly _browseGamesButton: Locator;
+    readonly _userInfoProfileName: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -53,12 +60,14 @@ export class RegistrationPage extends BasePage {
         this._middleName = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_middle_name');
         this._secretQuestion = this.page.locator('#registration_form_1 > fieldset.form__section.form__section--registration > div:nth-child(17) > div');
         this._secretQuestionList = this.page.locator('#registration_form_1 > fieldset.form__section.form__section--registration > div:nth-child(17) > div > div.selectric-wrapper.selectric-open.selectric-below > div.selectric-items > div > ul');
+        this._secretAnswer = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_secret_answer');
         this._birthday = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_birthday');
         this._address = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_address');
         this._country = this.page.locator('#registration_form_1 > fieldset.form__section.form__section--registration > div:nth-child(21) > div > div.selectric-wrapper > div.selectric.selectric--placeholder');
         this._countryList = this.page.locator('#registration_form_1 > fieldset.form__section.form__section--registration > div:nth-child(21) > div > div.selectric-wrapper.selectric-below.selectric-open > div.selectric-items > div > ul');
         this._city = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_city');
         this._postalCode = this.page.locator('#core__protected_modules_user_yiiForm_RegistrationForm_postcode');
+        this._submitButton = this.page.locator('button[data-test="control-submit"]');
         this._calendar = {
             prev: this.page.locator('div[data-action="prev"]'),
             next: this.page.locator('div[data-action="next"]'),
@@ -67,6 +76,11 @@ export class RegistrationPage extends BasePage {
             months: this.page.locator('div[class="datepicker--cells datepicker--cells-months"]'),
             days: this.page.locator('div[class="datepicker--cells datepicker--cells-days"]'),
         };
+        this._successIcon = this.page.locator('i[class="icon-success"]');
+        this._successMessage = this.page.locator('h1[class="notification__title"]');
+        this._viewProfileButton = this.page.locator('a[href="/cabinet/profile"]');
+        this._browseGamesButton = this.page.locator('div[class="notification__buttons"] > a[href="/gameList"]');
+        this._userInfoProfileName = this.page.locator('div[class="user-info__profile-name"] > span');
         
     }
 
@@ -147,6 +161,11 @@ export class RegistrationPage extends BasePage {
         await this._postalCode.click();
         await this._postalCode.type(code);
     }
+    
+    async typeSecretAnswer(answer: string): Promise<void> {
+        await this._secretAnswer.click();
+        await this._secretAnswer.type(answer);
+    }
 
     async selectSecretQuestion(question: 'Music' |  'Street' | 'Actor' | 'Grandmother' | 'Postcode' | 'Car' | 'Teacher' | 'Book' | 'Game' | 'Custom') {
         let myMap = new Map<string, string>([
@@ -162,12 +181,37 @@ export class RegistrationPage extends BasePage {
             ["Custom", "Set your own security word or phrase"],
         ]);
         await this._secretQuestion.click();
+        await this._city.scrollIntoViewIfNeeded();
         await (await this._secretQuestionList.locator('li').filter({ hasText: myMap.get(question) })).click();
     }
 
     async selectCountry(country: string) {
         await this._country.click();
         await (await this._countryList.locator('li').filter({ hasText: country })).click();
+    }
+    
+    async clickSubmit() {
+        await this._submitButton.click();
+    }  
+
+    async checkSuccessIcon() {
+        await this._successIcon.isVisible();
+    }  
+
+    async checkSuccessMessage() {
+        await this._successMessage.isVisible();
+    }   
+
+    async checkViewProfileButton() {
+        await this._viewProfileButton.isVisible();
+    } 
+
+    async checkBrowseGamesButton() {
+        await this._browseGamesButton.isVisible();
+    }
+    
+    async obtainUserinfoUsername() {
+        return await this._userInfoProfileName.textContent();
     }
 
     async selectBirthday(day: number, month: number, year: number) {
