@@ -9,7 +9,7 @@ function delay(time) {
   });
 }
 
-test.describe("User Registration Tests", () => {
+test.describe("Search Bar Tests", () => {
   let homePage: HomePage;
 
   // Start with a login on each test

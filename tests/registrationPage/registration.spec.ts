@@ -74,7 +74,7 @@ function generateNewUser() {
   LASTNAME = faker.name.lastName();
   MIDNAME = faker.name.middleName();
   SECRETQUESTION = "Grandmother";
-  SECRETANSWER = faker.name.fullName();
+  SECRETANSWER = faker.name.firstName();
   BIRTHDAY = { day: 1, month: 2, year: 2000 };
   ADDRESS = faker.address.streetAddress();
   CITY = faker.address.city();
