@@ -2,10 +2,10 @@
 NodeJS
 
 **Used third party libraries**
-Playwright - Runner and tests
-Faker - Data generator
-Mailinator-inbox - API access to mailinator inbox (not working)
-ESLint - Code formatter
+- Playwright - Runner and tests
+- Faker - Data generator
+- Mailinator-inbox - API access to mailinator inbox (not working)
+- ESLint - Code formatter
 
 **Running the tests**
 
