@@ -1,7 +1,8 @@
-import { test, expect } from "@playwright/test";
-import { RegistrationPage } from "./registration.po";
-import { Inbox } from "mailinator-inbox";
 import { faker } from "@faker-js/faker";
+import { expect, test } from "@playwright/test";
+import { wait } from "../../utils/waitUtils";
+import { RegistrationPage } from "./registration.po";
+// import { retrieveRegEmail } from "../../utils/mailinator";
 
 // Can manually set variables here and remove the generation of the user to use this static values
 let EMAIL = "";
@@ -41,27 +42,6 @@ let CITY = "";
 let COUNTRY = "";
 let ZIP = "";
 let registrationPage: RegistrationPage;
-
-// Stop the execution for the specified time
-function delay(time) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
-
-// Doesn't work, requires API key from monthly payment
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function retrieveRegEmail(address) {
-  const inbox = new Inbox(address);
-  await inbox.refresh();
-  const emailHeaders = inbox.emailHeaders;
-  for (let i = 0; i < emailHeaders.length; i++) {
-    if (emailHeaders[i].subject.includes("Registration")) {
-      return await inbox.getEmail(emailHeaders[i].id);
-    }
-    retrieveRegEmail(address);
-  }
-}
 
 // Function to generate random new user
 function generateNewUser() {
@@ -103,6 +83,7 @@ function printNewUser() {
   `);
 }
 
+// Fill whole formulary
 async function populateFields() {
   await registrationPage.typeEmail(EMAIL);
   await registrationPage.clickTermsAndCons();
@@ -222,10 +203,26 @@ test.describe("User Registration Tests", () => {
     // Submit form
     await registrationPage.clickSubmit();
 
-    await delay(5000);
+    let emailErrorMessage;
 
-    expect(await registrationPage.obtainEmailErrorMessage()).toContain(
-      "Email or phone number is required."
+    // wait for the error message to be shown
+    await wait(
+      () => {
+        return new Promise(async (resolve, reject) => {
+          emailErrorMessage = await registrationPage.obtainEmailErrorMessage();
+          if (
+            emailErrorMessage !== null &&
+            emailErrorMessage.includes("Email or phone number is required.")
+          ) {
+            resolve(emailErrorMessage);
+          } else {
+            reject;
+          }
+        });
+      },
+      20000,
+      1000,
+      "Could not find the empty email error message"
     );
   });
 

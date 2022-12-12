@@ -54,7 +54,8 @@
           "node/shebang": "off",
           "no-dupe-class-members": "off",
           "require-atomic-updates": "off",
-          "node/no-unpublished-import": "off"
+          "node/no-unpublished-import": "off",
+          "no-async-promise-executor": "off"
         },
         "parserOptions": {
           "ecmaVersion": 2018,
