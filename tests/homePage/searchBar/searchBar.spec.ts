@@ -19,7 +19,7 @@ test.describe("Search Bar Tests", () => {
 
     let countResults;
 
-    // wait for the results count to be greater than 4
+    // wait for the results count to be greater than 5
     await wait(
       () => {
         return new Promise(async (resolve, reject) => {
@@ -36,7 +36,7 @@ test.describe("Search Bar Tests", () => {
       "Did not find at least 5 elements"
     );
 
-    // Iterate through all childs, first child is row 1
+    // Iterate through all childs, first child is row 1. Check it contains the word "GAME"
     for (let i = 1; i <= countResults; i++) {
       expect(
         await (await homePage.obtainResultTitle(i).toString()).toUpperCase()
